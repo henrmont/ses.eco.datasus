@@ -22,7 +22,7 @@
                   type="button"
                   matTooltip="Atualizar regra" 
                   (click)="roleUpdate(element)"
-                  [disabled]="ownerRole(element) || checkPermissions('tfd/regra atualizar')">
+                  [disabled]="ownerRole(element) || checkPermissions('datasus/regra atualizar')">
             <mat-icon>drive_file_rename_outline</mat-icon>
           </button>
           
@@ -30,7 +30,7 @@
                   type="button"
                   matTooltip="Deletar regra" 
                   (click)="roleDelete(element)"
-                  [disabled]="ownerRole(element) || checkPermissions('tfd/regra deletar')">
+                  [disabled]="ownerRole(element) || checkPermissions('datasus/regra deletar')">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

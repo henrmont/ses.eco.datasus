@@ -9,16 +9,16 @@ export const datasusRoutes: Routes = [
     {
         path: 'usuarios',
         loadComponent: () => import('./../pages/users-page/users.page').then( m => m.UsersPage),
-        data: { permission: 'tfd/usuário listar' } // Adicionado
+        data: { permission: 'datasus/usuário listar' } // Adicionado
     },
     {
         path: 'regras',
         loadComponent: () => import('./../pages/roles-page/roles.page').then( m => m.RolesPage),
-        data: { permission: 'tfd/regra listar' } // Adicionado
+        data: { permission: 'datasus/regra listar' } // Adicionado
     },
     {
         path: 'sigtap',
         loadComponent: () => import('./../pages/sigtap-page/sigtap-page').then( m => m.SigtapPage),
-        data: { permission: 'tfd/datasus listar' } // Adicionado
+        data: { permission: 'datasus/sigtap listar' } // Adicionado
     },
 ];

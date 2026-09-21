@@ -14,7 +14,7 @@ import { MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dial
 // Serviços e Componentes
 import { MessageService } from '../../../core/services/message-service';
 import { LoadingComponent } from '../../../core/components/loading-component/loading-component';
-import { DatasusService } from '../../services/datasus-service';
+import { SigtapService } from '../../services/sigtap.service';
 
 // Modais (Dialogs)
 import { UserCreateComponent } from '../../components/users/user-create/user-create.component';
@@ -64,7 +64,7 @@ export class DatasusLayout implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly dialog = inject(MatDialog);
   private readonly messageService = inject(MessageService);
-  private readonly datasusService = inject(DatasusService);
+  private readonly sigtapService = inject(SigtapService);
   private readonly destroyRef = inject(DestroyRef);
 
   // Captura do input HTML
@@ -127,7 +127,7 @@ export class DatasusLayout implements OnInit, OnDestroy {
       this.openLoading();
       this.selectedFile.set(files[0]);
       
-      this.datasusService.process(this.selectedFile()!)
+      this.sigtapService.process(this.selectedFile()!)
         .pipe(
           finalize(() => {
             if (this.loadingDialog) this.loadingDialog.close();
@@ -192,11 +192,11 @@ export class DatasusLayout implements OnInit, OnDestroy {
       ]
     },
     {
-      subHeader: 'Datasus',
-      requiredRoles: ['datasus listar', 'datasus importar'],
+      subHeader: 'Sigtap',
+      requiredRoles: ['sigtap listar', 'sigtap importar'],
       items: [
-        { label: 'Sigtap', icon: 'medical_services', permissions: ['datasus listar'], routerLink: ['sigtap'] },
-        { label: 'Importar competência', icon: 'upload', permissions: ['datasus importar'], action: () => this.importCompetence() }
+        { label: 'Sigtap', icon: 'medical_services', permissions: ['sigtap listar'], routerLink: ['sigtap'] },
+        { label: 'Importar competência', icon: 'upload', permissions: ['sigtap importar'], action: () => this.importCompetence() }
       ]
     },
   ];

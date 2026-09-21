@@ -64,7 +64,7 @@ export class RoleUpdateComponent implements OnInit {
   protected readonly permissionGroups = [
     { label: 'USUÁRIOS', icon: 'people', filter: 'usuário' },
     { label: 'REGRAS', icon: 'security', filter: 'regra' },
-    { label: 'DATASUS', icon: 'medical_services', filter: 'datasus' },
+    { label: 'SIGTAP', icon: 'medical_services', filter: 'sigtap' },
   ];
 
   protected readonly errorMessages: Record<string, Array<{ type: string; message: string }>> = {

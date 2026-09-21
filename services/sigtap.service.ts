@@ -11,7 +11,7 @@ const requestOptions = {
 @Injectable({
   providedIn: 'root',
 })
-export class DatasusService {
+export class SigtapService {
 
   constructor(
     private http: HttpClient
@@ -20,11 +20,11 @@ export class DatasusService {
   process(data: any): Observable<any> {
     const formData = new FormData()
     formData.append('file', data)
-    return this.http.post<any>(`${environment.apiDatasusUrl}/process`, formData, {headers: requestOptions})
+    return this.http.post<any>(`${environment.apiDatasusUrl}/sigtap/process`, formData, {headers: requestOptions})
   }
 
   getCompetences(): Observable<Competence[]> {
-    return this.http.get<Competence[]>(`${environment.apiTfdUrl}/datasus/get-competences`, {headers: requestOptions})
+    return this.http.get<Competence[]>(`${environment.apiDatasusUrl}/sigtap/get-competences`, {headers: requestOptions})
   }
   
 }

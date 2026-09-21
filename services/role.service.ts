@@ -15,7 +15,7 @@ export class RoleService {
   // Injeção de Dependências & Configurações
   // ==========================================
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiTfdUrl}/roles`;
+  private readonly apiUrl = `${environment.apiDatasusUrl}/roles`;
 
   // ==========================================
   // Métodos de Leitura (GET)

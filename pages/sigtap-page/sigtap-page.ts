@@ -9,7 +9,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingComponent } from '../../../core/components/loading-component/loading-component';
 import { Permission } from '../../models/permission.model';
-import { DatasusService } from '../../services/datasus-service';
+import { SigtapService } from '../../services/sigtap.service';
 
 const TFD_SIGTAP_CHANNEL = new BroadcastChannel('tfd-sigtap-channel');
 
@@ -29,7 +29,7 @@ export class SigtapPage implements OnInit {
   }
 
   constructor(
-    private datasusService: DatasusService,
+    private sigtapService: SigtapService,
     private dialog: MatDialog,
     private route: ActivatedRoute
   ) {
@@ -46,7 +46,7 @@ export class SigtapPage implements OnInit {
 
   getCompetences() {
     this.loading()
-    this.datasusService.getCompetences().subscribe({
+    this.sigtapService.getCompetences().subscribe({
       next: (response) => {
         this.dataSource.set(new MatTableDataSource(response))
       },
@@ -57,7 +57,7 @@ export class SigtapPage implements OnInit {
   }
 
   upgradeCompetences() {
-    this.datasusService.getCompetences().subscribe({
+    this.sigtapService.getCompetences().subscribe({
       next: (response) => {
         this.dataSource.set(new MatTableDataSource(response))
       },

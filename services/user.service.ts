@@ -13,7 +13,7 @@ import { User } from '../models/user.model';
 })
 export class UserService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiTfdUrl}/users`;
+  private readonly apiUrl = `${environment.apiDatasusUrl}/users`;
 
   // ==========================================
   // Consultas (GET)
