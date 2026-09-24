@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild, Dest
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
 
 // Angular Material
 import { MatIconModule } from '@angular/material/icon';
@@ -12,13 +11,18 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 
 // Serviços e Componentes
-import { MessageService } from '../../../core/services/message-service';
-import { LoadingComponent } from '../../../core/components/loading-component/loading-component';
-import { SigtapService } from '../../services/sigtap.service';
+// Serviços e Componentes
+import { MessageService } from '../../core/services/message-service';
+import { LoadingComponent } from '../../core/components/loading-component/loading-component';
+import { SigtapService } from '../services/sigtap.service';
 
 // Modais (Dialogs)
-import { UserCreateComponent } from '../../components/users/user-create/user-create.component';
-import { RoleCreateComponent } from '../../components/roles/role-create/role-create.component';
+import { UserCreateComponent } from '../components/users/user-create/user-create.component';
+import { RoleCreateComponent } from '../components/roles/role-create/role-create.component';
+
+// Enums Locais
+import { Professionals } from '../enums/professionals';
+import { finalize } from 'rxjs';
 
 // Nomes dos canais do módulo TFD
 type DatasusChannelKey = 'ROLES' | 'USERS' | 'SIGTAP';
@@ -32,14 +36,16 @@ const DATASUS_CHANNEL_NAMES: Record<DatasusChannelKey, string> = {
 interface MenuItem {
   label: string;
   icon: string;
-  permissions: string[];
+  types?: string[];        // Tipos de profissional autorizados (opcional)
+  permissions?: string[];  // Permissões de acesso autorizadas (opcional)
   routerLink?: string[];
   action?: () => void;
 }
 
 interface MenuGroup {
   subHeader: string;
-  requiredRoles: string[];
+  requiredTypes?: string[];       // Tipos exigidos para o grupo
+  requiredPermissions?: string[]; // Permissões exigidas para o grupo
   items: MenuItem[];
 }
 
@@ -103,16 +109,72 @@ export class DatasusLayout implements OnInit, OnDestroy {
   }
 
   // ==========================================
-  // Métodos do Template
+  // Métodos de Verificação de Acesso por Professional Types
   // ==========================================
-  protected checkPermission(names: string[]): boolean {
-    const module = this.route.snapshot.routeConfig?.path;
-    const roles = this.route.parent?.snapshot.data['user']?.roles || [];
-    
-    return roles.some((role: any) => {
-      const permissions: string[] = role.permissions?.map((p: any) => p.name) || [];
-      return names.some(name => permissions.includes(`${module}/${name}`));
+
+  /**
+   * Obtém o objeto `user` da rota atual ou da rota pai.
+   */
+  private get currentUser(): any {
+    return this.route.snapshot.data['user'] || this.route.parent?.snapshot.data['user'];
+  }
+
+  /**
+   * Extrai a lista de tipos de profissional atrelados ao usuário logado.
+   */
+  private get userProfessionalTypes(): string[] {
+    const user = this.currentUser;
+    const professional = user?.professional;
+
+    if (!professional?.types || !Array.isArray(professional.types)) {
+      return [];
+    }
+
+    return professional.types.map((item: any) => typeof item === 'string' ? item : item.type);
+  }
+
+  /**
+   * Verifica se o usuário possui ao menos um dos tipos de profissional informados.
+   */
+  protected checkProfessionalType(allowedTypes?: string[]): boolean {
+    if (!allowedTypes || allowedTypes.length === 0) return true;
+
+    const currentTypes = this.userProfessionalTypes;
+    return allowedTypes.some(type => currentTypes.includes(type));
+  }
+
+  /**
+   * Verifica se o usuário possui ao menos uma das permissões informadas.
+   */
+  protected checkPermission(names?: string[]): boolean {
+    if (!names || names.length === 0) return true;
+
+    const user = this.currentUser;
+    const roles: any[] = user?.roles || [];
+
+    // Se o usuário não tem roles atreladas, não possui a permissão
+    if (!roles.length) return false;
+
+    // Obtém o nome do módulo ativo na rota
+    const module = this.route.snapshot.routeConfig?.path || this.route.parent?.snapshot.routeConfig?.path || '';
+
+    // Consolida todas as permissões das roles do usuário
+    const userPermissions = roles.flatMap((role: any) => 
+      (role.permissions || []).map((p: any) => p.name)
+    );
+
+    // Retorna true se houver correspondência com ou sem o prefixo do módulo
+    return names.some(name => {
+      const fullPermissionName = module ? `${module}/${name}` : name;
+      return userPermissions.includes(fullPermissionName) || userPermissions.includes(name);
     });
+  }
+
+  /**
+   * Combina a verificação de Tipo de Profissional E Permissões (E Lógica).
+   */
+  protected hasAccess(types?: string[], permissions?: string[]): boolean {
+    return this.checkProfessionalType(types) && this.checkPermission(permissions);
   }
 
   protected importCompetence(): void {
@@ -173,30 +235,71 @@ export class DatasusLayout implements OnInit, OnDestroy {
       });
   }
 
-  // --- MENU DO TEMPLATE HTML ---
+  // ==========================================
+  // MENU DO TEMPLATE HTML (Baseado em Types)
+  // ==========================================
   protected readonly menuGroups: MenuGroup[] = [
     {
       subHeader: 'Usuários',
-      requiredRoles: ['usuário listar', 'usuário criar'],
+      requiredTypes: [Professionals.ADMINISTRADOR],
+      requiredPermissions: ['usuário listar', 'usuário criar'],
       items: [
-        { label: 'Usuários', icon: 'groups', permissions: ['usuário listar'], routerLink: ['usuarios'] },
-        { label: 'Novo usuário', icon: 'person_add', permissions: ['usuário criar'], action: () => this.userCreate() }
+        { 
+          label: 'Usuários', 
+          icon: 'groups', 
+          types: [Professionals.ADMINISTRADOR], 
+          permissions: ['usuário listar'], 
+          routerLink: ['usuarios'] 
+        },
+        { 
+          label: 'Novo usuário', 
+          icon: 'person_add', 
+          types: [Professionals.ADMINISTRADOR], 
+          permissions: ['usuário criar'], 
+          action: () => this.userCreate() 
+        }
       ]
     },
     {
       subHeader: 'Regras',
-      requiredRoles: ['regra listar', 'regra criar'],
+      requiredTypes: [Professionals.ADMINISTRADOR],
+      requiredPermissions: ['regra listar', 'regra criar'],
       items: [
-        { label: 'Regras', icon: 'security', permissions: ['regra listar'], routerLink: ['regras'] },
-        { label: 'Nova regra', icon: 'add_moderator', permissions: ['regra criar'], action: () => this.roleCreate() }
+        { 
+          label: 'Regras', 
+          icon: 'security', 
+          types: [Professionals.ADMINISTRADOR], 
+          permissions: ['regra listar'], 
+          routerLink: ['regras'] 
+        },
+        { 
+          label: 'Nova regra', 
+          icon: 'add_moderator', 
+          types: [Professionals.ADMINISTRADOR], 
+          permissions: ['regra criar'], 
+          action: () => this.roleCreate() 
+        }
       ]
     },
     {
       subHeader: 'Sigtap',
-      requiredRoles: ['sigtap listar', 'sigtap importar'],
+      requiredTypes: [Professionals.SIGTAP],
+      requiredPermissions: ['sigtap listar', 'sigtap criar'],
       items: [
-        { label: 'Sigtap', icon: 'medical_services', permissions: ['sigtap listar'], routerLink: ['sigtap'] },
-        { label: 'Importar competência', icon: 'upload', permissions: ['sigtap importar'], action: () => this.importCompetence() }
+        { 
+          label: 'Competências', 
+          icon: 'medical_services', 
+          types: [Professionals.SIGTAP], 
+          permissions: ['sigtap listar'], 
+          routerLink: ['sigtap'] 
+        },
+        { 
+          label: 'Importar competência', 
+          icon: 'upload', 
+          types: [Professionals.SIGTAP], 
+          permissions: ['sigtap importar'], 
+          action: () => this.importCompetence() 
+        }
       ]
     },
   ];

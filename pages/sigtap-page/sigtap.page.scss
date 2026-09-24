@@ -65,11 +65,15 @@ section {
     }
 
     // Colunas de Largura Fixa
-    th.mat-column-name { width: 85%; }
+    th.mat-column-competence { width: 85%; }
     th.mat-column-actions { width: 15%; }
 
     td.actions-cell {
       @include flex-center($spacing-xs);
+    }
+
+    .valid {
+      color: green;
     }
   }
 }

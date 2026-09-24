@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
 export const datasusRoutes: Routes = [
     {
         path: '',
-        loadComponent: () => import('./../pages/index-page/index-page').then( m => m.IndexPage)
+        loadComponent: () => import('./../pages/index-page/index.page').then( m => m.IndexPage)
     },
     {
         path: 'usuarios',
@@ -18,7 +18,7 @@ export const datasusRoutes: Routes = [
     },
     {
         path: 'sigtap',
-        loadComponent: () => import('./../pages/sigtap-page/sigtap-page').then( m => m.SigtapPage),
+        loadComponent: () => import('./../pages/sigtap-page/sigtap.page').then( m => m.SigtapPage),
         data: { permission: 'datasus/sigtap listar' } // Adicionado
     },
 ];
