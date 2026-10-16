@@ -5,7 +5,7 @@
       <input type="file" name="competence" #competence style="display: none;" accept=".zip" (change)="onFileChange($event)" />
       
       @for (group of menuGroups; track group.subHeader) {
-        @if (checkProfessionalType(group.requiredTypes)) {
+        @if (hasAccess(group.requiredTypes, group.requiredPermissions)) {
           
           <div mat-subheader>{{ group.subHeader }}</div>
           

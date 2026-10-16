@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, Injector, inject, OnDestroy, OnInit, viewChild, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
 
 // Angular Material & CDK
@@ -16,10 +15,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Core & Models
 import { LoadingComponent } from '../../../core/components/loading-component/loading-component';
-import { Permission } from '../../models/permission.model';
-import { Role } from '../../models/role.model';
-import { User } from '../../models/user.model';
+import { Permission } from '../../../core/models/permission.model';
+import { Role } from '../../../core/models/role.model';
+import { DatasusUser } from '../../models/user.model';
 import { SigtapService } from '../../services/sigtap.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sigtap-page',
@@ -46,8 +46,8 @@ export class SigtapPage implements OnInit, OnDestroy {
   // Injeção de Dependências
   // ==========================================
   private readonly sigtapService = inject(SigtapService);
+  private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
-  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
 
@@ -61,7 +61,7 @@ export class SigtapPage implements OnInit, OnDestroy {
   // Propriedades e Estado Reativo
   // ==========================================
   private loadingDialog!: MatDialogRef<LoadingComponent>;
-  private readonly currentUser: User | undefined = this.route.parent?.parent?.snapshot.data['user'];
+  private readonly currentUser: DatasusUser | null = this.authService.getCurrentUser();
 
   protected readonly displayedColumns: string[] = ['competence', 'actions'];
   protected readonly dataSource = new MatTableDataSource<any>([]);

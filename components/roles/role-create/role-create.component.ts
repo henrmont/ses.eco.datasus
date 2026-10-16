@@ -18,7 +18,7 @@ import { MessageService } from '../../../../core/services/message-service';
 import { CustomValidators } from '../../../../core/validators/custom.validator';
 
 // Services, Enums & Local Components
-import { Permission } from '../../../models/permission.model';
+import { Permission } from '../../../../core/models/permission.model';
 import { RoleService } from '../../../services/role.service';
 
 @Component({

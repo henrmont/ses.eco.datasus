@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Professionals } from '../enums/professionals';
-import { professionalGuard } from '../../core/guards/professional-guard';
+import { datasusGuard } from '../guards/datasus.guard';
 
 export const datasusRoutes: Routes = [
   {
@@ -10,7 +10,7 @@ export const datasusRoutes: Routes = [
   {
     path: 'usuarios',
     loadComponent: () => import('./../pages/users-page/users.page').then(m => m.UsersPage),
-    canActivate: [professionalGuard],
+    canActivate: [datasusGuard],
     data: { 
       permission: 'datasus/usuário listar', 
       types: [Professionals.ADMINISTRADOR] 
@@ -19,7 +19,7 @@ export const datasusRoutes: Routes = [
   {
     path: 'regras',
     loadComponent: () => import('./../pages/roles-page/roles.page').then(m => m.RolesPage),
-    canActivate: [professionalGuard],
+    canActivate: [datasusGuard],
     data: { 
       permission: 'datasus/regra listar', 
       types: [Professionals.ADMINISTRADOR] 
@@ -28,10 +28,15 @@ export const datasusRoutes: Routes = [
   {
     path: 'sigtap',
     loadComponent: () => import('./../pages/sigtap-page/sigtap.page').then(m => m.SigtapPage),
-    canActivate: [professionalGuard],
+    canActivate: [datasusGuard],
     data: { 
       permission: 'datasus/sigtap listar', 
-      types: [Professionals.ADMINISTRADOR] 
+      types: [Professionals.SIGTAP] 
     }
   },
+  {
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full'
+  }
 ];

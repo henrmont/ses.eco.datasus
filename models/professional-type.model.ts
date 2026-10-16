@@ -1,5 +1,5 @@
 export interface ProfessionalType {
-    id: number,
+    id?: number,
     professional_id?: number,
-    type: string,
+    type?: string,
 }

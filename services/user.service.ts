@@ -5,8 +5,8 @@ import { catchError, map, Observable, of, switchMap, timer } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../core/models/api-response.model';
-import { Role } from '../models/role.model';
-import { User } from '../models/user.model';
+import { Role } from '../../core/models/role.model';
+import { User } from '../../core/models/user.model';
 
 @Injectable({
   providedIn: 'root',

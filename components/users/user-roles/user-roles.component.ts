@@ -14,7 +14,7 @@ import { ApiResponse } from '../../../../core/models/api-response.model';
 import { MessageService } from '../../../../core/services/message-service';
 
 // Services, Models & Local Components
-import { Role } from '../../../models/role.model';
+import { Role } from '../../../../core/models/role.model';
 import { UserService } from '../../../services/user.service';
 
 @Component({

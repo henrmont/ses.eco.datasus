@@ -1,5 +1,5 @@
 import { ProfessionalType } from "./professional-type.model";
-import { User } from "./user.model";
+import { DatasusUser } from "./user.model";
 
 export interface Professional {
     id: number,
@@ -7,8 +7,6 @@ export interface Professional {
     name: string,
     cns: string,
     registration: string,
-    professional_register?: string,
-    cbo?: string,
-    user: User,
+    user: DatasusUser,
     types: ProfessionalType[] | null
 }
